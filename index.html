@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rutina personalizada de modales para tu perro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent:#FF5A3C;        /* coral principal */
+    --accent-dark:#E8402A;
+    --accent-soft:#FFE9E4;
+    --blue:#2E9BD6;
+    --blue-soft:#EAF5FB;
+    --yellow-soft:#FFF6DC;
+    --ink:#26303B;
+    --ink-soft:#5B6672;
+    --line:#EDF0F3;
+    --card:#F3F6F8;
+    --ok:#22A867;
+    --bad:#E23B3B;
+    --radius:14px;
+    --maxw:480px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);background:#fff;min-height:100vh}
+  #app{max-width:var(--maxw);margin:0 auto;padding:0 20px 48px;min-height:100vh;display:flex;flex-direction:column}
+
+  /* ---------- Header ---------- */
+  header{display:flex;align-items:center;justify-content:center;position:relative;padding:14px 0 10px}
+  .back{position:absolute;left:0;top:12px;background:none;border:none;font-size:22px;color:var(--ink);cursor:pointer;padding:4px 10px;line-height:1}
+  .logo{display:flex;align-items:center;gap:6px;font-weight:900;font-size:15px}
+  .logo .paw{width:22px;height:22px;border-radius:6px;background:linear-gradient(160deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;font-size:12px}
+  .progress{height:3px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:22px}
+  .progress i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .35s ease}
+
+  /* ---------- Tipografía de pantalla ---------- */
+  h1{font-size:21px;font-weight:900;text-align:center;line-height:1.3;margin-bottom:8px}
+  h1 .acc{color:var(--accent)}
+  h1 .accb{color:var(--blue)}
+  .sub{text-align:center;color:var(--ink-soft);font-size:13.5px;font-weight:600;margin-bottom:22px;line-height:1.45}
+
+  /* ---------- Tarjetas de opción ---------- */
+  .opt{width:100%;display:flex;align-items:center;gap:14px;background:var(--card);border:2px solid transparent;border-radius:var(--radius);padding:15px 16px;margin-bottom:12px;cursor:pointer;text-align:left;font-family:inherit;transition:border-color .15s,background .15s}
+  .opt:hover{border-color:#d7dee4}
+  .opt.sel{background:var(--blue-soft);border-color:var(--blue)}
+  .opt .em{font-size:26px;flex:0 0 34px;text-align:center}
+  .opt .tx b{display:block;font-size:15.5px;font-weight:800}
+  .opt .tx span{font-size:13px;color:var(--ink-soft);font-weight:600}
+  .opt .chk{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid #C9D2DA;flex:0 0 20px;position:relative}
+  .opt.sel .chk{border-color:var(--blue);background:var(--blue)}
+  .opt.sel .chk::after{content:'';position:absolute;inset:4px;border-radius:50%;background:#fff}
+
+  /* ---------- Chips ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:18px}
+  .chip{background:var(--card);border:2px solid transparent;border-radius:99px;padding:8px 15px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .chip.sel{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+  .field-label{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px}
+  select,input[type=text],input[type=email]{width:100%;border:1.5px solid #D9E0E6;border-radius:10px;padding:13px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+  select:focus,input:focus{border-color:var(--blue)}
+
+  /* ---------- Likert ---------- */
+  .likert-wrap{margin-top:auto;padding-top:40px}
+  .likert{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .likert button{background:#fff;border:none;border-right:1px solid var(--line);padding:16px 0;font-size:24px;cursor:pointer;transition:background .15s;font-family:inherit}
+  .likert button:last-child{border-right:none}
+  .likert button.sel{background:var(--blue-soft);box-shadow:inset 0 0 0 2px var(--blue)}
+  .likert-labels{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:8px}
+
+  /* ---------- Botones ---------- */
+  .btn{display:block;width:100%;background:linear-gradient(180deg,var(--accent),var(--accent-dark));color:#fff;border:none;border-radius:12px;padding:16px;font-size:15.5px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:20px;box-shadow:0 6px 16px rgba(232,64,42,.25)}
+  .btn:disabled{background:#F5B7AC;box-shadow:none;cursor:default}
+  .btn.big{font-size:16px;text-transform:uppercase;letter-spacing:.3px}
+
+  /* ---------- Interstitials ---------- */
+  .quote{background:var(--blue-soft);border-radius:var(--radius);padding:18px 18px 14px;margin:18px 0}
+  .quote .qm{color:var(--accent);font-size:30px;font-weight:900;line-height:.5;display:block;margin-bottom:10px}
+  .quote p{font-weight:800;font-size:15px;line-height:1.5}
+  .quote .who{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid #d5e8f4;font-size:12.5px;color:var(--ink-soft);font-weight:700}
+  .trust{margin:14px 0}
+  .trust li{list-style:none;font-size:13.5px;font-weight:700;padding:6px 0;display:flex;gap:8px}
+  .trust li::before{content:'✔️'}
+  .note-card{background:var(--yellow-soft);border-radius:12px;padding:14px 16px;font-size:13.5px;font-weight:700;text-align:center;line-height:1.5;margin:16px 0}
+  .img-slot{width:100%;aspect-ratio:16/10;border-radius:var(--radius);background:linear-gradient(140deg,#e8eef2,#f6f9fb);display:flex;align-items:center;justify-content:center;font-size:52px;margin:16px 0;overflow:hidden}
+  .img-slot img{width:100%;height:100%;object-fit:cover}
+  .caption{text-align:center;font-size:13px;color:var(--ink-soft);font-weight:600;line-height:1.5;margin-bottom:8px}
+  .center-copy{text-align:center;font-size:14px;font-weight:600;line-height:1.6;color:var(--ink-soft);margin:14px 0}
+  .center-copy b{color:var(--ink)}
+  .cal{font-size:64px;text-align:center;margin:20px 0}
+
+  /* ---------- Loading ---------- */
+  .ring-wrap{display:flex;flex-direction:column;align-items:center;margin:26px 0 10px}
+  .ring{position:relative;width:120px;height:120px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring circle{fill:none;stroke-width:9;stroke-linecap:round}
+  .ring .bg{stroke:var(--line)}
+  .ring .fg{stroke:var(--accent);transition:stroke-dashoffset .2s linear}
+  .ring .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900}
+  .ring .pct small{font-size:13px;margin-top:10px}
+  .loading-caption{text-align:center;font-size:12.5px;color:var(--ink-soft);font-weight:600;margin-top:12px}
+  .social-red{color:var(--accent-dark);text-align:center;font-weight:900;font-size:18px;margin-top:22px}
+  .modal-bg{position:fixed;inset:0;background:rgba(40,48,56,.55);display:flex;align-items:flex-start;justify-content:center;padding-top:26vh;z-index:50}
+  .modal{background:#fff;border-radius:14px;padding:20px 22px;max-width:320px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .modal h3{font-size:16px;font-weight:900;margin-bottom:6px}
+  .modal p{font-size:13.5px;color:var(--ink-soft);font-weight:600;margin-bottom:16px;line-height:1.45}
+  .modal .row{display:flex;gap:10px}
+  .modal .row button{flex:1;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit}
+  .modal .row button:hover{border-color:var(--blue)}
+
+  /* ---------- Email ---------- */
+  .privacy{display:flex;gap:9px;font-size:11.5px;color:#9AA5AF;font-weight:600;line-height:1.5;margin-top:12px}
+
+  /* ---------- Resultados ---------- */
+  .rcard{border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:18px;box-shadow:0 2px 10px rgba(30,40,50,.04)}
+  .rcard h4{font-size:13.5px;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+  .rcard h4 .norm{font-size:11px;color:#9AA5AF;border:1px solid var(--line);border-radius:8px;padding:3px 8px;font-weight:800}
+  .scorebar{position:relative;height:8px;border-radius:99px;background:linear-gradient(90deg,#E23B3B,#F5A623,#D6D64B,#7CC24B,#2E9BD6);margin:26px 0 6px}
+  .scorebar .dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--ink)}
+  .scorebar .tag{position:absolute;bottom:14px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:11px;font-weight:800;padding:4px 8px;border-radius:7px;white-space:nowrap}
+  .score-scale{display:flex;justify-content:space-between;font-size:9.5px;font-weight:800;color:#9AA5AF;text-transform:uppercase;letter-spacing:.3px}
+  .alert{background:#FDECEC;border-radius:10px;padding:12px 14px;font-size:12.5px;font-weight:600;line-height:1.5;color:#7A2E2E;margin-top:14px}
+  .alert b{display:block;color:#B32B2B;margin-bottom:3px}
+  .ficha{margin-top:14px}
+  .ficha li{list-style:none;display:flex;gap:10px;padding:7px 0;font-size:13px;font-weight:600;color:var(--ink-soft);align-items:baseline}
+  .ficha li b{color:var(--ink);font-weight:800}
+  .perfil{background:var(--blue-soft);border-radius:var(--radius);padding:18px;margin-bottom:18px}
+  .perfil .tagp{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--blue)}
+  .perfil h3{font-size:18px;font-weight:900;margin:4px 0 8px}
+  .perfil p{font-size:13.5px;font-weight:600;line-height:1.55;color:var(--ink-soft)}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+  .vs .col{border:1px solid var(--line);border-radius:12px;padding:14px}
+  .vs .pill{font-size:11px;font-weight:900;border-radius:99px;padding:3px 10px;display:inline-block;margin-bottom:10px}
+  .vs .now .pill{background:var(--card);color:var(--ink-soft)}
+  .vs .after .pill{background:var(--blue);color:#fff}
+  .vs .dog{font-size:44px;text-align:center;margin:6px 0 10px}
+  .vs dt{font-size:11px;font-weight:800;color:var(--ink-soft);margin-top:8px}
+  .vs dd{font-size:13px;font-weight:800;margin-bottom:4px}
+  .bars{display:flex;gap:3px;margin-top:2px}
+  .bars i{height:6px;flex:1;border-radius:3px;background:var(--line)}
+  .bars.red i.on{background:var(--bad)}
+  .bars.blue i.on{background:var(--blue)}
+  .offer-top{background:var(--blue);color:#fff;border-radius:12px;padding:10px;text-align:center;font-size:13px;font-weight:800;margin-bottom:14px}
+  .offer-top b{color:#FFD34D}
+  .promo{background:#E9F9F0;border:1px dashed #7ED8A8;border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:center}
+  .promo .lbl{font-size:12.5px;font-weight:800;color:#1E7A4C;margin-bottom:8px}
+  .promo .code{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1.5px solid #7ED8A8;border-radius:9px;padding:9px 12px;font-weight:800;font-size:14px}
+  .promo .code .t{color:#1E7A4C;font-variant-numeric:tabular-nums}
+  .plan{border:2px solid var(--line);border-radius:12px;padding:0;margin-bottom:12px;overflow:hidden;cursor:pointer;position:relative}
+  .plan.sel{border-color:var(--blue)}
+  .plan .pop{background:var(--blue);color:#fff;text-align:center;font-size:11px;font-weight:900;padding:5px;letter-spacing:.4px}
+  .plan .row{display:flex;align-items:center;gap:12px;padding:14px}
+  .plan .disc{position:absolute;top:0;left:0;background:var(--bad);color:#fff;font-size:11px;font-weight:900;padding:3px 8px;border-radius:0 0 8px 0}
+  .plan.sel .disc{top:auto}
+  .plan .pop + .row .disc{top:24px}
+  .plan .radio{width:19px;height:19px;border-radius:50%;border:2px solid #C9D2DA;flex:0 0 19px;position:relative}
+  .plan.sel .radio{border-color:var(--blue)}
+  .plan.sel .radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--blue)}
+  .plan .nm b{display:block;font-size:14px;font-weight:900}
+  .plan .nm span{font-size:12px;color:#9AA5AF;font-weight:700;text-decoration:line-through}
+  .plan .nm .real{color:var(--ink);text-decoration:none;margin-left:4px}
+  .plan .pd{margin-left:auto;background:var(--card);border-radius:10px;padding:8px 12px;text-align:center}
+  .plan .pd b{font-size:17px;font-weight:900;display:block}
+  .plan .pd span{font-size:10px;font-weight:800;color:var(--ink-soft)}
+  .legal{font-size:11px;color:#9AA5AF;font-weight:600;text-align:center;line-height:1.5;margin-top:10px}
+  .guar{text-align:center;font-size:12.5px;font-weight:800;margin:14px 0 22px}
+  .get{margin-bottom:20px}
+  .get li{list-style:none;display:flex;gap:9px;font-size:13.5px;font-weight:700;padding:6px 0}
+  .get li::before{content:'✅';flex:0 0 auto}
+  .faq details{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px}
+  .faq summary{font-size:13.5px;font-weight:800;cursor:pointer;list-style:none;display:flex;gap:8px}
+  .faq summary::before{content:'💬'}
+  .faq p{font-size:13px;font-weight:600;color:var(--ink-soft);line-height:1.55;margin-top:8px}
+  .metodo{display:grid;gap:12px;margin-bottom:20px}
+  .metodo .step{display:flex;gap:12px;border:1px solid var(--line);border-radius:12px;padding:13px}
+  .metodo .n{width:28px;height:28px;flex:0 0 28px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
+  .metodo b{font-size:13.5px;display:block;margin-bottom:2px}
+  .metodo p{font-size:12.5px;font-weight:600;color:var(--ink-soft);line-height:1.5}
+  .sec-title{font-size:17px;font-weight:900;text-align:center;margin:26px 0 14px}
+  footer{text-align:center;font-size:11px;color:#9AA5AF;font-weight:600;margin-top:30px;line-height:2}
+  footer a{color:var(--ink-soft)}
+  .fade{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="back" id="backBtn" aria-label="Volver">‹</button>
+    <div class="logo"><span class="paw">🐾</span><span id="brandName"></span></div>
+  </header>
+  <div class="progress"><i id="pbar" style="width:0%"></i></div>
+  <main id="screen" class="fade" style="display:flex;flex-direction:column;flex:1"></main>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const BRAND  = "BuenPerro™";
+const N_REAL = "12.000";           // ← reemplazar por tu número real de rutinas/leads
+const PRODUCTO = "La Rutina Ideal™";
+const OFERTA = {                   // Mercado Pago, pago único
+  precioAntes:"$49.900",
+  precioHoy:"$14.999",
+  anclaje:"Una sola sesión con un adiestrador presencial cuesta más del doble — y esto lo tenés para siempre.",
+  items:[
+    {em:"📘", n:"EBOOK PRINCIPAL — La Rutina Ideal™ de Modales para tu Perro", d:"El método completo día por día: 4 semanas de rutinas de 15 minutos con refuerzo positivo.", v:"$22.900"},
+    {em:"🎁", n:"BONO 1 — Guía Paseos Sin Tirones", d:"El protocolo paso a paso para que la correa deje de ser una lucha.", v:"$6.900"},
+    {em:"🎁", n:"BONO 2 — Visitas y Timbre Bajo Control", d:"Qué hacer (y qué no) cuando suena el timbre o llega gente a casa.", v:"$5.900"},
+    {em:"🎁", n:"BONO 3 — Calendario de 28 Días Imprimible", d:"Planilla de seguimiento para marcar cada día completado y sostener el hábito.", v:"$3.900"},
+    {em:"🎁", n:"BONO 4 — Kit Anti-Ansiedad", d:"Ejercicios para perros que sufren al quedarse solos o con ruidos fuertes.", v:"$6.400"},
+    {em:"🎁", n:"BONO 5 — Recetario de Premios Caseros", d:"Premios económicos y sanos para entrenar sin gastar de más.", v:"$3.900"}
+  ]
+};
+const DESCUENTO = "70%";
+
+/* ================= ESTADO ================= */
+/* Shim: usa sessionStorage si está disponible; si el entorno lo bloquea (previews), cae a memoria */
+const MEM = {};
+const store = {
+  get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return (k in MEM)? MEM[k] : null; } },
+  set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} MEM[k]=String(v); }
+};
+let S = JSON.parse(store.get("quizState")||"{}");
+S.estres      = S.estres      || [];
+S.mejorar     = S.mejorar     || [];
+S.modales     = S.modales     || [];
+S.convivencia = S.convivencia || [];
+S.refuerzos   = S.refuerzos   || [];
+let idx = 0; // Siempre arranca en la pantalla 1 al cargar. Si querés que retome donde quedó el usuario, cambiá por: let idx = S._idx || 0;
+function save(){ S._idx = idx; store.set("quizState", JSON.stringify(S)); }
+
+/* ============ HELPERS DINÁMICOS ============ */
+const g   = (o,a)=> S.sexo==="hembra" ? a : o;                       // género del perro
+const per = ()=> (S.edad==="cachorro"||S.edad==="joven") ? "tu cachorro" : "tu perro";
+const perN= ()=> S.nombre ? S.nombre : per();
+const raza= ()=> (!S.raza || S.raza==="Mestizo" || S.raza==="Otra") ? "perro" : S.raza;
+const esMestizo = ()=> !S.raza || S.raza==="Mestizo" || S.raza==="Otra";
+function fechaMeta(){
+  const d = new Date(); d.setDate(d.getDate()+28);
+  return d.toLocaleDateString("es-AR",{day:"numeric",month:"long",year:"numeric"});
+}
+function promoCode(){
+  const d=new Date(), m=d.toLocaleDateString("es-AR",{month:"short"}).replace(".","");
+  return (S.nombre||"perro").toLowerCase().replace(/\s+/g,"")+"_"+m+String(d.getFullYear()).slice(2);
+}
+
+/* ================= PANTALLAS ================= */
+const steps = [
+
+/* 1 — Edad */
+{ id:"edad", render:()=> singleChoice({
+  h:"DESCUBRÍ LA RUTINA IDEAL PARA TU PERRO",
+  sub:"Respondé 3 minutos de preguntas y descubrí por qué tira, salta o ladra — y el plan de 15 minutos al día para cambiarlo.",
+  key:"edad",
+  opts:[
+    {v:"cachorro", em:"🐶", b:"Cachorro",     s:"Menos de 6 meses"},
+    {v:"joven",    em:"🐕", b:"Perro joven",  s:"6 a 18 meses"},
+    {v:"adulto",   em:"🦮", b:"Perro adulto", s:"1,5 a 7 años"},
+    {v:"senior",   em:"🐕‍🦺", b:"Perro senior", s:"Más de 7 años"}
+  ],
+  footer:`Al continuar, aceptás los <a href="#">Términos de uso</a>, la <a href="#">Política de privacidad</a> y la <a href="#">Política de cookies</a>.`
+})},
+
+/* 2 — Sexo */
+{ id:"sexo", render:()=> singleChoice({
+  h:`${cap(per())} es...`,
+  key:"sexo",
+  opts:[
+    {v:"macho",  em:"♂️", b:"Macho"},
+    {v:"hembra", em:"♀️", b:"Hembra"}
+  ]
+})},
+
+/* 3 — Raza */
+{ id:"raza", render(){
+  const razas=["Mestizo","Golden Retriever","Labrador","Ovejero alemán","Caniche","Border Collie","Bulldog francés","Beagle","Salchicha","Rottweiler"];
+  const otras=["Akita","Basset Hound","Bóxer","Bulldog inglés","Chihuahua","Cocker Spaniel","Dálmata","Dogo argentino","Doberman","Galgo","Husky siberiano","Jack Russell","Pitbull","Pug","Schnauzer","Shih Tzu","Otra"];
+  return `
+    <h1>Elegí la raza de ${per()}</h1>
+    <p class="sub">La rutina se adapta a las tendencias típicas de cada raza.</p>
+    <div class="chips">${razas.map(r=>`<button class="chip ${S.raza===r?'sel':''}" onclick="pick('raza','${r}',false);renderChipsNext()">${r}</button>`).join("")}</div>
+    <div class="field-label">Otra raza</div>
+    <select onchange="pick('raza',this.value,false);renderChipsNext()">
+      <option value="">Seleccioná la raza</option>
+      ${otras.map(r=>`<option ${S.raza===r?'selected':''}>${r}</option>`).join("")}
+    </select>
+    <div style="margin-top:auto"></div>
+    <button class="btn" id="nextBtn" ${S.raza?'':'disabled'} onclick="next()">Siguiente paso</button>`;
+}},
+
+/* 4 — Tamaño */
+{ id:"tamano", render:()=> singleChoice({
+  h:`¿Qué tamaño tiene ${esMestizo()? per() : "tu "+raza()}?`,
+  key:"tamano",
+  opts:[
+    {v:"chico",   em:"🐕", b:"Chico",   s:"Hasta 10 kg"},
+    {v:"mediano", em:"🦮", b:"Mediano", s:"10 a 25 kg"},
+    {v:"grande",  em:"🐕‍🦺", b:"Grande",  s:"Más de 25 kg"}
+  ]
+})},
+
+/* 5 — Objetivo */
+{ id:"objetivo", render:()=> singleChoice({
+  h:`¡Definamos el objetivo principal de la rutina de ${per()}!`,
+  sub:"Elegí tu prioridad:",
+  key:"objetivo",
+  opts:[
+    {v:"atencion", em:"🗣️", b:"Que me preste atención y me haga caso en cualquier lugar"},
+    {v:"modales",  em:"✨",  b:"Mejores modales en casa y con visitas"},
+    {v:"vinculo",  em:"❤️", b:"Crear un vínculo más fuerte con mi perro"},
+    {v:"paseos",   em:"🧘", b:"Paseos tranquilos, sin tirones ni escenas"}
+  ]
+})},
+
+/* 6 — Interstitial social */
+{ id:"social", render:()=>`
+  <h1 class="accb-h"><span class="accb">Más de ${N_REAL} dueños de perros</span><br>ya crearon su rutina</h1>
+  <p class="sub">Descubrieron con <b>${PRODUCTO}</b> que el problema nunca fue el perro ni el dueño: era el método.</p>
+  <div class="quote"><span class="qm">“</span>
+    <p>Tu perro no necesita más órdenes ni más disciplina. Necesita hábitos reales: rutinas cortas, todos los días.</p>
+    <div class="who">🐾 <b>Equipo ${BRAND}</b></div>
+  </div>
+  <ul class="trust">
+    <li>Método de refuerzo positivo, respaldado por la evidencia en comportamiento canino</li>
+    <li>15 minutos al día para 24 horas de tranquilidad</li>
+    <li>Garantía de 30 días atada al resultado</li>
+  </ul>
+  <div style="margin-top:auto"></div>
+  <button class="btn" onclick="next()">Continuar</button>`},
+
+/* 7 — Interstitial raza */
+{ id:"intRaza", render:()=>`
+  <h1><span class="acc">Desarrollá modales confiables</span> con una rutina pensada para ${esMestizo()? "el temperamento único de "+per() : "tu "+raza()}.</h1>
+  <div class="img-slot">🐕‍🦺<!-- FOTO: perro de la raza dando la pata / caminando calmado --></div>
+  <p class="caption">Vamos a desglosar todo en una rutina clara, paso a paso, perfecta para ${esMestizo()? per() : "tu <b>"+raza()+"</b>"} ${S.edad==="cachorro"?"cachorro":""}.</p>
+  <div style="margin-top:auto"></div>
+  <button class="btn" onclick="next()">Continuar</button>`},
+
+/* 8-10 — Likert */
+{ id:"lik1", render:()=> likert("lik1", `${cap(perN())} me ignora por completo cuando algo lo distrae.`)},
+{ id:"lik2", render:()=> likert("lik2", "Vuelvo de los paseos con el brazo dolorido y de mal humor, en vez de relajado.")},
+{ id:"lik3", render:()=> likert("lik3", "Ya probé consejos de YouTube y de conocidos, pero nada me funcionó de forma consistente.")},
+
+/* 11 — No estás solo */
+{ id:"noSolo", render:()=>`
+  <h1><span class="accb">¡No estás solo/a — y no sos un mal dueño!</span></h1>
+  <p class="sub">Que ${per()} tire de la correa o ignore tus llamados no habla de vos: habla del método que te enseñaron. Una rutina simple de modales funciona en la vida real.</p>
+  <div class="quote"><span class="qm">“</span>
+    <p>Los buenos modales ayudan a que un perro se mantenga tranquilo en las situaciones de todos los días: los paseos, las visitas, la calle.</p>
+    <div class="who">🐾 <b>Equipo ${BRAND}</b></div>
+  </div>
+  <div class="note-card">Personalizá la <b>rutina de modales de ${per()}</b> respondiendo las próximas preguntas.</div>
+  <div style="margin-top:auto"></div>
+  <button class="btn" onclick="next()">Continuar</button>`},
+
+/* 12 — Timbre */
+{ id:"timbre", render:()=> singleChoice({
+  h:`¿${cap(per())} pierde el control cuando suena el timbre?`,
+  img:"🚪", key:"timbre",
+  opts:[ {v:"si", em:"😮‍💨", b:"Sí"}, {v:"no", em:"🤗", b:"No"} ]
+})},
+
+/* 13 — Salta */
+{ id:"salta", render:()=> singleChoice({
+  h:`¿${cap(per())} salta sobre las personas o los animales?`,
+  img:"🙋", key:"salta",
+  opts:[ {v:"si", em:"😢", b:"Sí"}, {v:"no", em:"😎", b:"No"} ]
+})},
+
+/* 14 — Ladridos */
+{ id:"ladra", render:()=> singleChoice({
+  h:`¿${cap(per())} les ladra a las personas o a otros animales?`,
+  img:"📢", key:"ladra",
+  opts:[
+    {v:"siempre", b:"Sí, todo el tiempo"},
+    {v:"aveces",  b:"A veces pasa"},
+    {v:"nunca",   b:"Casi nunca"}
+  ]
+})},
+
+/* 15 — Correa */
+{ id:"correa", render:()=> singleChoice({
+  h:`En los paseos, ¿${per()} tira de la correa?`,
+  img:"🦮", key:"correa",
+  opts:[
+    {v:"mucho", em:"💪", b:"Sí, me lleva ${g('él','ella')} a mí"},
+    {v:"aveces",em:"😅", b:"Solo cuando ve algo que le interesa"},
+    {v:"no",    em:"🚶", b:"Casi nunca, camina bien"}
+  ]
+})},
+
+/* 16 — Estrés multi */
+{ id:"estres", render:()=> multiChoice({
+  h:`¿Qué situaciones hacen que el día a día con ${per()} sea estresante?`,
+  sub:"Marcá todas las que correspondan:",
+  key:"estres",
+  opts:[
+    {v:"animales",  em:"🐈", b:"Cerca de otros animales"},
+    {v:"gente",     em:"👥", b:"Conocer gente nueva"},
+    {v:"solo",      em:"🏠", b:"Cuando se queda solo en casa"},
+    {v:"ruidos",    em:"📢", b:"Ruidos fuertes (¡tormentas, cohetes!)"},
+    {v:"viaje",     em:"✈️", b:"De viaje o en el auto"},
+    {v:"vet",       em:"👨‍⚕️", b:"Visitas al veterinario"},
+    {v:"ascensor",  em:"🏢", b:"En el ascensor o espacios comunes"},
+    {v:"otro",      em:"🤔", b:"Otra situación"},
+    {v:"ninguna",   em:"🧘", b:"Sin estrés", exclusive:true}
+  ],
+  btn:"Siguiente paso"
+})},
+
+/* 17 — Mejorar multi */
+{ id:"mejorar", render:()=> multiChoice({
+  h:"¿Qué te gustaría mejorar de su comportamiento?",
+  sub:"Marcá todas las que correspondan:",
+  key:"mejorar",
+  opts:[
+    {v:"ladridos",   em:"🗣️", b:"Ladridos excesivos"},
+    {v:"energia",    em:"⚡", b:"Energía desbordada"},
+    {v:"reactividad",em:"😤", b:"Reactividad hacia personas o animales"},
+    {v:"correa",     em:"🦮", b:"Tirones de correa"},
+    {v:"ansiedad",   em:"💔", b:"Ansiedad por separación"},
+    {v:"ensuciar",   em:"💧", b:"Ensuciar adentro de casa"},
+    {v:"destructivo",em:"🛋️", b:"Comportamiento destructivo (muebles, zapatillas...)"}
+  ],
+  freeText:true, btn:"Continuar"
+})},
+
+/* 18 — Modales multi */
+{ id:"modalesQ", render:()=> multiChoice({
+  h:"¿Qué modales te gustaría inculcarle con la rutina?",
+  sub:"Marcá todas las que correspondan:",
+  key:"modales",
+  opts:[
+    {v:"social",       em:"🐕", b:"Buena socialización"},
+    {v:"tranquilo",    em:"🧘", b:"Reacciones tranquilas"},
+    {v:"senales",      em:"💬", b:"Respuesta a tus señales"},
+    {v:"concentracion",em:"👀", b:"Concentración durante los paseos"}
+  ],
+  freeText:true, btn:"Continuar"
+})},
+
+/* 19 — Convivencia */
+{ id:"convivencia", render:()=> multiChoice({
+  h:`¿Con quién convive ${per()}?`,
+  sub:"Marcá todas las que correspondan:",
+  key:"convivencia",
+  opts:[
+    {v:"chicos",  em:"👶", b:"Chicos en casa"},
+    {v:"perros",  em:"🐕", b:"Otros perros"},
+    {v:"gatos",   em:"🐈", b:"Gatos"},
+    {v:"mayores", em:"👴", b:"Adultos mayores"},
+    {v:"solo",    em:"🧍", b:"Solo conmigo", exclusive:true}
+  ],
+  btn:"Continuar"
+})},
+
+/* 20 — Vivienda */
+{ id:"vivienda", render:()=> singleChoice({
+  h:"¿Dónde viven?",
+  key:"vivienda",
+  opts:[
+    {v:"depto",  em:"🏢", b:"Departamento"},
+    {v:"patio",  em:"🏠", b:"Casa con patio"},
+    {v:"parque", em:"🌳", b:"Casa con parque grande / campo"}
+  ]
+})},
+
+/* 21 — Quién entrena */
+{ id:"quien", render:()=> singleChoice({
+  h:`¿Quién va a hacer la rutina con ${per()}?`,
+  key:"quien",
+  opts:[
+    {v:"yo",      em:"🙋", b:"Solo yo"},
+    {v:"familia", em:"👫", b:"Yo y mi pareja/familia"},
+    {v:"turnos",  em:"🔄", b:"Depende el día, se turna quien puede"}
+  ]
+})},
+
+/* 22 — Anticipación */
+{ id:"anticipa", render:()=>`
+  <h1>¡Tu rutina personalizada de modales está casi lista!</h1>
+  <div class="cal">🗓️✅🏅</div>
+  <p class="center-copy">Imaginate tomando un café con tu perro echado tranquilo a tus pies, o cruzándote con otro perro sin que se te tense el brazo.</p>
+  <p class="center-copy">La rutina te lleva desde las reacciones exageradas del <b>día 1</b> hasta ese perro tranquilo del que estás <b>orgulloso</b>, en 28 días.</p>
+  <div style="margin-top:auto"></div>
+  <button class="btn" onclick="next()">Continuar</button>`},
+
+/* 23 — Refuerzos */
+{ id:"refuerzos", render:()=> multiChoice({
+  h:`¿Qué le ayuda a ${per()} a prestarte atención?`,
+  sub:"Marcá todas las que correspondan:",
+  key:"refuerzos",
+  opts:[
+    {v:"comida",  em:"🍖", b:"Premios de comida"},
+    {v:"juegos",  em:"🎾", b:"Juegos y juguetes"},
+    {v:"voz",     em:"🗣️", b:"Solo mi voz"},
+    {v:"otro",    em:"➕", b:"Otra cosa"},
+    {v:"nose",    em:"🤔", b:"Todavía no lo sé", exclusive:true}
+  ],
+  btn:"Siguiente paso"
+})},
+
+/* 24 — Recompensa */
+{ id:"recompensa", render:()=> singleChoice({
+  h:`¿Recompensás a ${per()} cuando se porta bien?`,
+  key:"recompensa",
+  opts:[
+    {v:"no",     em:"😐", b:"No, todavía no"},
+    {v:"aveces", em:"🤔", b:"A veces, sin mucha constancia"},
+    {v:"si",     em:"😎", b:"Sí, siempre"}
+  ]
+})},
+
+/* 25 — Nombre */
+{ id:"nombre", render:()=>`
+  <h1>El nombre de ${per()} es...</h1>
+  <div class="field-label">Escribí el nombre de ${per()}:</div>
+  <input type="text" id="nombreInput" value="${S.nombre||""}" placeholder="Ej: Perla" autocomplete="off"
+    oninput="S.nombre=this.value.trim();save();document.getElementById('nextBtn').disabled=!S.nombre">
+  <div style="margin-top:auto"></div>
+  <button class="btn" id="nextBtn" ${S.nombre?'':'disabled'} onclick="next()">Siguiente paso</button>`},
+
+/* 26 — Tiempo */
+{ id:"tiempo", render:()=> singleChoice({
+  h:`¿Cuánto tiempo por día podés dedicarle a ${perN()}?`,
+  key:"tiempo",
+  opts:[
+    {v:"7",  b:"7 minutos al día"},
+    {v:"15", b:"15 minutos al día"},
+    {v:"30", b:"30 minutos al día"},
+    {v:"60", b:"60 minutos al día"}
+  ]
+})},
+
+/* 27 — Fecha meta */
+{ id:"meta", render:()=>`
+  <h1>Esta rutina está diseñada para inculcarle buenos modales a ${perN()}.</h1>
+  <p class="sub">Según tus respuestas, esperamos que los modales de ${perN()} mejoren para el</p>
+  <h1 class="accb" style="font-size:20px;color:var(--blue)">${fechaMeta()}</h1>
+  <div class="cal" aria-hidden="true" style="display:flex;align-items:flex-end;justify-content:center;gap:8px;font-size:0;height:120px;margin:24px 0">
+    ${[28,42,58,72,86,100].map((h,i)=>`<span style="width:34px;height:${h}%;border-radius:8px;background:${i===5?'var(--blue)':i>1?'linear-gradient(180deg,#8FD07A,#F5A623)':'#F0F3F5'};display:inline-block;position:relative">${i===4?'<i style="position:absolute;top:-26px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-style:normal;font-size:10px;font-weight:900;padding:3px 7px;border-radius:6px">Meta</i>':''}</span>`).join("")}
+  </div>
+  <p class="caption">Este gráfico muestra tu progreso potencial si seguís todos los pasos de la rutina.</p>
+  <div style="margin-top:auto"></div>
+  <button class="btn" onclick="next()">Continuar</button>`},
+
+/* 28 — Loading */
+{ id:"loading", noBack:true, render(){ setTimeout(startLoading,50); return `
+  <div class="ring-wrap">
+    <div class="ring">
+      <svg width="120" height="120"><circle class="bg" cx="60" cy="60" r="52"></circle>
+      <circle class="fg" id="ringFg" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"></circle></svg>
+      <div class="pct"><span id="pctNum">0</span><small>%</small></div>
+    </div>
+    <p class="loading-caption">Creando la rutina de modales personalizada de ${perN()}...</p>
+  </div>
+  <p class="social-red">Más de ${N_REAL} dueños de perros</p>
+  <p class="sub" style="margin-top:2px">ya eligieron ${BRAND}</p>
+  <div class="quote" style="background:var(--card)">
+    <p style="font-size:13.5px">🐾 Método de refuerzo positivo, paso a paso, adaptado a las respuestas que diste sobre ${perN()}.</p>
+  </div>
+  <div id="modalSlot"></div>`;
+}},
+
+/* 29 — Email */
+{ id:"email", noBack:true, render:()=>`
+  <h1>Ingresá tu correo para recibir la rutina de buenos modales de ${perN()}.</h1>
+  <div class="field-label" style="margin-top:14px">Escribí tu correo electrónico:</div>
+  <input type="email" id="emailInput" value="${S.email||""}" placeholder="Ingresá tu correo para recibir tu rutina" autocomplete="email"
+    oninput="S.email=this.value.trim();save();document.getElementById('nextBtn').disabled=!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(S.email)">
+  <div class="privacy">🔒 <span>Protegemos tu privacidad. Nunca enviamos spam, solo información relevante para vos y ${perN()}.</span></div>
+  <div style="margin-top:auto"></div>
+  <button class="btn" id="nextBtn" ${/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(S.email||"")?'':'disabled'} onclick="captureLead()">Continuar</button>`},
+
+/* 30 — Resultados */
+{ id:"result", noBack:true, render:renderResults }
+];
+
+/* ============ RENDER HELPERS ============ */
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function singleChoice({h,sub,img,key,opts,footer}){
+  return `
+    <h1>${h}</h1>
+    ${sub?`<p class="sub">${sub}</p>`:""}
+    ${img?`<div class="img-slot" style="aspect-ratio:16/8">${img}<!-- FOTO/GIF acá --></div>`:""}
+    ${opts.map(o=>`
+      <button class="opt ${S[key]===o.v?'sel':''}" onclick="pick('${key}','${o.v}',true)">
+        ${o.em?`<span class="em">${o.em}</span>`:""}
+        <span class="tx"><b>${o.b.replace(/\$\{g\('([^']*)','([^']*)'\)\}/g,(m,a,b)=>g(a,b))}</b>${o.s?`<span>${o.s}</span>`:""}</span>
+      </button>`).join("")}
+    ${footer?`<footer style="margin-top:auto">${footer}<br>Todos los derechos reservados. ${new Date().getFullYear()}</footer>`:""}`;
+}
+
+function multiChoice({h,sub,key,opts,freeText,btn}){
+  const arr=S[key];
+  return `
+    <h1>${h}</h1>
+    ${sub?`<p class="sub">${sub}</p>`:""}
+    ${opts.map(o=>`
+      <button class="opt ${arr.includes(o.v)?'sel':''}" onclick="toggle('${key}','${o.v}',${!!o.exclusive},'${opts.filter(x=>x.exclusive).map(x=>x.v).join(",")}')">
+        <span class="em">${o.em}</span>
+        <span class="tx"><b style="font-size:14.5px">${o.b}</b></span>
+        <span class="chk"></span>
+      </button>`).join("")}
+    ${freeText?`<input type="text" placeholder="Escribí tu respuesta acá..." value="${S[key+'Otro']||""}" style="border-style:dashed;margin-bottom:12px" oninput="S['${key}Otro']=this.value;save();refreshMultiBtn('${key}')">`:""}
+    <div style="margin-top:auto"></div>
+    <button class="btn" id="nextBtn" ${arr.length||S[key+'Otro']?'':'disabled'} onclick="next()">${btn}</button>`;
+}
+
+function likert(key,statement){
+  return `
+    <h1>${statement}</h1>
+    <p class="sub">¿Te identificás con esta frase?</p>
+    <div class="likert-wrap">
+      <div class="likert">
+        ${["👎","👎","😐","👍","👍"].map((e,i)=>`<button class="${S[key]===i+1?'sel':''}" style="${i===0||i===4?'font-size:28px':''}" onclick="pick('${key}',${i+1},true)">${e}</button>`).join("")}
+      </div>
+      <div class="likert-labels"><span>Para nada</span><span>Totalmente</span></div>
+    </div>`;
+}
+
+/* ============ INTERACCIÓN ============ */
+function pick(key,val,advance){
+  S[key]=val; save();
+  if(advance){ setTimeout(next,180); } else { render(); }
+}
+function renderChipsNext(){ render(); }
+function toggle(key,val,exclusive,exclusiveList){
+  const excl=(exclusiveList||"").split(",").filter(Boolean);
+  let arr=S[key];
+  if(exclusive){ arr=arr.includes(val)?[]:[val]; }
+  else{
+    arr=arr.filter(v=>!excl.includes(v));
+    arr.includes(val)? arr=arr.filter(v=>v!==val) : arr.push(val);
+  }
+  S[key]=arr; save(); render();
+}
+function refreshMultiBtn(key){
+  const b=document.getElementById("nextBtn");
+  if(b) b.disabled = !(S[key].length || S[key+"Otro"]);
+}
+function next(){ if(idx<steps.length-1){ idx++; save(); render(); window.scrollTo(0,0);} }
+function back(){ if(idx>0){ idx--; save(); render(); } }
+
+/* ============ LOADING GAMIFICADO ============ */
+function startLoading(){
+  let p=0; const C=326.7;
+  const fg=document.getElementById("ringFg"), num=document.getElementById("pctNum");
+  const timer=setInterval(()=>{
+    if(!document.getElementById("ringFg")){ clearInterval(timer); return; }
+    p++;
+    num.textContent=p;
+    fg.style.strokeDashoffset = C - (C*p/100);
+    if(p===32 && S.pausa1===undefined){ clearInterval(timer); askModal(
+      "Una pregunta más",
+      `¿Te estresa el comportamiento de ${perN()} cuando hay otras personas?`,
+      "pausa1", ()=>resumeLoading(p)); return; }
+    if(p===82 && S.pausa2===undefined){ clearInterval(timer); askModal(
+      "Finalizando tu rutina",
+      `¿Podés dedicarle 15 minutos por día a ${perN()}?`,
+      "pausa2", ()=>resumeLoading(p)); return; }
+    if(p>=100){ clearInterval(timer); setTimeout(next,500); }
+  },45);
+}
+function resumeLoading(from){
+  let p=from; const C=326.7;
+  const fg=document.getElementById("ringFg"), num=document.getElementById("pctNum");
+  const timer=setInterval(()=>{
+    if(!document.getElementById("ringFg")){ clearInterval(timer); return; }
+    p++;
+    num.textContent=p;
+    fg.style.strokeDashoffset = C - (C*p/100);
+    if(p===82 && S.pausa2===undefined){ clearInterval(timer); askModal(
+      "Finalizando tu rutina",`¿Podés dedicarle 15 minutos por día a ${perN()}?`,"pausa2",()=>resumeLoading(p)); return; }
+    if(p>=100){ clearInterval(timer); setTimeout(next,500); }
+  },45);
+}
+function askModal(title,q,key,cb){
+  document.getElementById("modalSlot").innerHTML=`
+    <div class="modal-bg"><div class="modal">
+      <h3>${title}</h3><p>${q}</p>
+      <div class="row">
+        <button onclick="S['${key}']='no';save();closeModal()">No</button>
+        <button onclick="S['${key}']='si';save();closeModal()">Sí</button>
+      </div>
+    </div></div>`;
+  window.closeModal=()=>{ document.getElementById("modalSlot").innerHTML=""; cb(); };
+}
+
+/* ============ CAPTURA DE LEAD ============ */
+function captureLead(){
+  /* TODO: acá va tu webhook (ESP / Apps Script) + evento Lead del píxel de Meta:
+     fbq('track','Lead');
+     fetch('TU_WEBHOOK',{method:'POST',body:JSON.stringify(S)});
+  */
+  next();
+}
+
+/* ============ SCORE + PERFIL ============ */
+function calcScore(){
+  let s=10;
+  ["lik1","lik2","lik3"].forEach(k=>{ if(S[k]>=4) s-=0.8; });
+  if(S.timbre==="si") s-=0.7;
+  if(S.salta==="si")  s-=0.7;
+  if(S.ladra==="siempre") s-=0.8; else if(S.ladra==="aveces") s-=0.4;
+  if(S.correa==="mucho") s-=0.8; else if(S.correa==="aveces") s-=0.4;
+  const estresReal=S.estres.filter(v=>v!=="ninguna");
+  s-=Math.min(estresReal.length*0.3,1.5);
+  s-=Math.min(S.mejorar.length*0.4,2);
+  return Math.max(1.5, Math.round(s*10)/10);
+}
+function scoreLabel(s){ return s<3?"MUY BAJO": s<5?"BAJO": s<7.5?"PROMEDIO":"EXCELENTE"; }
+function reactividad(){
+  let r=0;
+  if(S.timbre==="si")r++; if(S.salta==="si")r++;
+  if(S.ladra==="siempre")r+=2; else if(S.ladra==="aveces")r++;
+  if(S.correa==="mucho")r+=2; else if(S.correa==="aveces")r++;
+  return r>=4?"Alta": r>=2?"Media":"Baja";
+}
+function sensibilidad(){
+  const n=S.estres.filter(v=>v!=="ninguna").length;
+  return n>=4?"Alta": n>=2?"Media":"Baja";
+}
+function conductaTop(){
+  const map={ladridos:"Ladridos excesivos",energia:"Energía desbordada",reactividad:"Reactividad",correa:"Tirones de correa",ansiedad:"Ansiedad por separación",ensuciar:"Ensuciar en casa",destructivo:"Comportamiento destructivo"};
+  return map[S.mejorar[0]] || S.mejorarOtro || "Modales generales";
+}
+function perfil(){
+  const n=perN(), m=S.mejorar, e=S.estres;
+  const pts={torbellino:0,guardian:0,explorador:0,sensible:0};
+  if(S.salta==="si")pts.torbellino+=2;
+  if(m.includes("energia"))pts.torbellino+=2;
+  if(e.includes("gente"))pts.torbellino++;
+  if(S.ladra==="siempre")pts.guardian+=2; else if(S.ladra==="aveces")pts.guardian++;
+  if(S.timbre==="si")pts.guardian+=2;
+  if(m.includes("reactividad")||m.includes("ladridos"))pts.guardian++;
+  if(S.correa==="mucho")pts.explorador+=2; else if(S.correa==="aveces")pts.explorador++;
+  if(S.lik1>=4)pts.explorador+=2;
+  if(m.includes("correa"))pts.explorador++;
+  if(m.includes("ansiedad"))pts.sensible+=2;
+  if(e.includes("ruidos"))pts.sensible++; if(e.includes("solo"))pts.sensible++;
+  if(sensibilidad()==="Alta")pts.sensible++;
+  const win=Object.entries(pts).sort((a,b)=>b[1]-a[1])[0][0];
+  const P={
+    torbellino:{n:"El Torbellino Social", t:`${n} no es ${g("maleducado","maleducada")}: le sobra amor y le falta un canal. La rutina le enseña a saludar sin revolear a nadie.`},
+    guardian:{n:"El Guardián Ruidoso", t:`${n} siente que cuidar la casa es su trabajo. Vamos a enseñarle cuándo el trabajo terminó.`},
+    explorador:{n:"El Explorador con Agenda Propia", t:`${n} pasea con vos... pero según su plan. La rutina invierte los roles sin gritos ni tirones.`},
+    sensible:{n:"El Sensible", t:`${n} no se porta mal: se preocupa de más. La rutina baja su ansiedad para que los modales salgan solos.`}
+  };
+  return P[win];
+}
+
+/* ============ RESULTADOS ============ */
+function renderResults(){
+  const n=perN(), s=calcScore(), lbl=scoreLabel(s), pf=perfil();
+  const react=reactividad(), sens=sensibilidad(), ct=conductaTop();
+  setTimeout(startCountdowns,50);
+  const objMap={atencion:"Que te preste atención en cualquier lugar",modales:"Mejores modales en casa y con visitas",vinculo:"Un vínculo más fuerte",paseos:"Paseos tranquilos"};
+  const bullets=[
+    `Rutina día por día adaptada a ${n} (${ct.toLowerCase()} incluida)`,
+    `Lecciones cortas de hasta 15 minutos`,
+    `Un perro más tranquilo en las situaciones de todos los días`,
+    `Confianza para ${g("llevarlo","llevarla")} a cualquier lado`
+  ];
+  if(S.convivencia.includes("chicos")) bullets.push("Módulo de modales con niños en casa");
+  if(S.convivencia.includes("perros")||S.convivencia.includes("gatos")) bullets.push("Módulo de convivencia multi-mascota");
+  if(S.quien==="familia"||S.quien==="turnos") bullets.push("Señales unificadas para que toda la familia use las mismas órdenes");
+  if(S.vivienda==="depto") bullets.push("Ejercicios pensados para departamento y espacios comunes");
+
+  const faqExtra = !S.refuerzos.includes("comida") ? `
+    <details><summary>A mi perro no lo motiva la comida</summary>
+    <p>Nos lo contaste en el quiz: puede que a ${n} lo motiven más los juegos o tu voz — o que el estrés le quite el apetito. Por eso tu rutina incluye un módulo específico de motivación.</p></details>`:"";
+  const faqAdulto = (S.edad==="adulto"||S.edad==="senior") ? `
+    <details><summary>¿Funciona con un perro adulto?</summary>
+    <p>Sí. Los hábitos se reeducan a cualquier edad; lo que cambia es el punto de partida, y la rutina de ${n} ya lo tiene en cuenta.</p></details>`:"";
+  const compromiso = S.pausa2==="si"
+    ? `Dijiste que podés darle 15 minutos por día — es exactamente todo lo que la rutina necesita.`
+    : `Tranquilo: hay días de solo 7 minutos. La rutina se adapta a tu tiempo, no al revés.`;
+
+  const stack = `
+    <div class="plan sel" style="cursor:default">
+      <div class="pop">🎁 OFERTA ÚNICA — TODO INCLUIDO</div>
+      ${OFERTA.items.map(it=>`
+      <div class="row" style="border-bottom:1px solid var(--line)">
+        <span class="em" style="font-size:22px">${it.em}</span>
+        <span class="nm" style="flex:1"><b>${it.n}</b><span class="real" style="text-decoration:none;font-size:12px;color:var(--ink-soft)">${it.d}</span></span>
+        <span class="pd" style="padding:6px 10px"><b style="font-size:12px;text-decoration:line-through;color:#9AA5AF">${it.v}</b></span>
+      </div>`).join("")}
+      <div class="row" style="background:var(--blue-soft)">
+        <span class="nm" style="flex:1"><b>Valor total: <span style="text-decoration:line-through">${OFERTA.precioAntes}</span></b><span class="real" style="text-decoration:none">Hoy, con el ${DESCUENTO} de descuento aplicado:</span></span>
+        <span class="pd" style="background:#fff"><b style="color:var(--accent-dark);font-size:19px">${OFERTA.precioHoy}</b><span>pago único</span></span>
+      </div>
+    </div>
+    <div class="note-card">💡 ${OFERTA.anclaje}</div>`;
+
+  return `
+  <h1>¡${n} está ${g("listo","lista")} para su rutina de buenos modales!</h1>
+
+  <div class="rcard">
+    <h4>Índice de Modales de ${n}: <span class="norm">IDEAL — 10</span></h4>
+    <div class="scorebar">
+      <span class="tag" style="left:${s*10}%">${n} — ${String(s).replace(".",",")}</span>
+      <span class="dot" style="left:${s*10}%"></span>
+    </div>
+    <div class="score-scale"><span>Muy bajo</span><span style="${lbl==='BAJO'?'color:var(--ink)':''}">Bajo</span><span>Promedio</span><span>Excelente</span></div>
+    <div class="alert"><b>⚠️ Índice ${lbl.toLowerCase()}:</b> sin una rutina, esto no se corrige solo — cada paseo, cada visita y cada timbre van sumando estrés que ni vos ni ${n} tienen por qué cargar. La buena noticia: con el método correcto, se revierte.</div>
+    <ul class="ficha">
+      <li>🐾 <span>Conducta principal: <b>${ct}</b></span></li>
+      <li>📊 <span>Reactividad: <b>${react}</b></span></li>
+      <li>💙 <span>Sensibilidad: <b>${sens}</b></span></li>
+      <li>✅ <span>Preparación para empezar: <b>${S.recompensa==="si"?"Perfecta":"Buena"}</b></span></li>
+      <li>🐕 <span>Perfil: <b>${esMestizo()?"Mestizo":raza()} ${S.edad}</b></span></li>
+      <li>🎯 <span>Tu objetivo: <b>${objMap[S.objetivo]||"Mejores modales"}</b></span></li>
+    </ul>
+  </div>
+
+  <div class="perfil">
+    <span class="tagp">Perfil de ${n}</span>
+    <h3>${pf.n}</h3>
+    <p>${pf.t}</p>
+    ${S.recompensa!=="si"?`<p style="margin-top:8px">💡 Vas a aprender el <b>timing exacto de la recompensa</b> — es el 80% del resultado.</p>`:""}
+  </div>
+
+  <div class="vs">
+    <div class="col now"><span class="pill">Hoy</span><div class="dog">😤</div>
+      <dt>Modales de ${n}</dt><dd>${cap(lbl.toLowerCase())}</dd>
+      <dt>Reactividad</dt><dd><div class="bars red"><i class="${react!=="Baja"?"on":""}"></i><i class="${react==="Alta"||react==="Media"?"on":""}"></i><i class="${react==="Alta"?"on":""}"></i></div></dd>
+    </div>
+    <div class="col after"><span class="pill">Con ${BRAND}</span><div class="dog">😌</div>
+      <dt>Modales de ${n}</dt><dd>Excelentes</dd>
+      <dt>Reactividad</dt><dd><div class="bars blue"><i class="on"></i><i></i><i></i></div></dd>
+    </div>
+  </div>
+
+  <div class="offer-top">⏱️ Descuento reservado por: <b id="cd1">10:00</b> · 🎁 Oferta de lanzamiento: <b>-${DESCUENTO}</b></div>
+  <div class="promo">
+    <div class="lbl">🏷️ ¡Tu código promocional está aplicado!</div>
+    <div class="code"><span>✔ ${promoCode()}</span><span class="t" id="cd2">10:00</span></div>
+  </div>
+
+  <h2 class="sec-title">${PRODUCTO} — todo lo que recibís hoy</h2>
+  ${stack}
+  <button class="btn big" onclick="checkout()">Quiero paseos tranquilos</button>
+  <p class="legal">Pago único, sin suscripciones. Acceso inmediato y para siempre.<br>Procesado de forma segura por Mercado Pago. Detalles en Términos de uso.</p>
+  <p class="guar">🛡️ Si en 30 días no notás paseos más tranquilos, te devolvemos el dinero</p>
+
+  <h2 class="sec-title">Tu rutina, adaptada a ${n}</h2>
+  <ul class="get">${bullets.map(b=>`<li>${b}</li>`).join("")}</ul>
+  <div class="note-card">${compromiso}</div>
+
+  <h2 class="sec-title">Cómo funciona el método</h2>
+  <div class="metodo">
+    <div class="step"><span class="n">1</span><div><b>Diagnóstico (ya lo hiciste)</b><p>Tus respuestas definieron el perfil de ${n} y las conductas prioritarias.</p></div></div>
+    <div class="step"><span class="n">2</span><div><b>Rutina día por día</b><p>Bloques de ${S.tiempo||"15"} minutos con ejercicios de refuerzo positivo, del día 1 al 28.</p></div></div>
+    <div class="step"><span class="n">3</span><div><b>Modales que se quedan</b><p>Cada semana consolida lo anterior para que los cambios se mantengan en el tiempo.</p></div></div>
+  </div>
+  <!-- Cuando tengas reseñas REALES de tus primeros clientes, reemplazá el bloque "método" o sumá acá un carrusel. No inventar testimonios. -->
+
+  <h2 class="sec-title">Preguntas frecuentes</h2>
+  <div class="faq">
+    <details><summary>¿Qué recibo exactamente? ¿Es una app?</summary>
+    <p>No es una app ni una suscripción. Recibís el ebook principal con la rutina completa de 28 días + los 5 bonos, todo descargable al instante después del pago. Es tuyo para siempre: lo leés en el celu, la compu o lo imprimís.</p></details>
+    <details><summary>Ya probé otras cosas y no funcionaron. ¿En qué es distinto?</summary>
+    <p>No son tips sueltos ni más órdenes: es una rutina estructurada día por día, basada en refuerzo positivo. El problema nunca fue tu perro ni vos — era el método.</p></details>
+    ${faqExtra}
+    <details><summary>¿Vale la pena la inversión?</summary>
+    <p>Pensalo así: ${OFERTA.anclaje.toLowerCase()} Cada semana que pasa sin método son más tirones, más estrés y más frustración acumulada.</p></details>
+    <details><summary>No tengo tiempo</summary>
+    <p>¿Cuánto tiempo te consume HOY lidiar con los tirones y los ladridos? Con ${S.tiempo||"15"} minutos al día en bloques cortos, invertís menos de lo que hoy perdés. Las lecciones duran hasta 15 minutos.</p></details>
+    ${faqAdulto}
+  </div>
+
+  <div class="rcard" style="text-align:center">
+    <h3 style="font-size:16px;font-weight:900;margin-bottom:8px">Garantía atada al resultado — 30 días</h3>
+    <p style="font-size:12.5px;font-weight:600;color:var(--ink-soft);line-height:1.55">Si seguís la rutina durante 30 días y no notás paseos más tranquilos con ${n}, te devolvemos el dinero. Así de simple: el riesgo lo asumimos nosotros. Más detalles en los Términos de uso.</p>
+  </div>
+
+  <h2 class="sec-title">${PRODUCTO} — todo lo que recibís hoy</h2>
+  ${stack}
+  <button class="btn big" onclick="checkout()">Quiero paseos tranquilos</button>
+  <p class="guar">🛡️ Si en 30 días no notás paseos más tranquilos, te devolvemos el dinero</p>
+
+  <footer>Todos los derechos reservados. ${new Date().getFullYear()}<br>
+  <a href="#">Contacto</a> · <a href="#">Política de privacidad</a> · <a href="#">Términos de uso</a></footer>`;
+}
+
+/* ============ COUNTDOWN PERSISTENTE ============ */
+function startCountdowns(){
+  let end = store.get("offerEnd");
+  if(!end){ end = Date.now()+10*60*1000; store.set("offerEnd",end); }
+  const t=setInterval(()=>{
+    const a=document.getElementById("cd1"), b=document.getElementById("cd2");
+    if(!a){ clearInterval(t); return; }
+    let ms=Math.max(0,end-Date.now());
+    const mm=String(Math.floor(ms/60000)).padStart(2,"0"), ss=String(Math.floor(ms%60000/1000)).padStart(2,"0");
+    a.textContent=`${mm}:${ss}`; if(b)b.textContent=`${mm}:${ss}`;
+    if(ms<=0)clearInterval(t);
+  },1000);
+}
+
+/* ============ CHECKOUT ============ */
+function checkout(){
+  /* TODO: evento InitiateCheckout del píxel + redirección a Mercado Pago (link único):
+     fbq('track','InitiateCheckout');
+     location.href = "TU_LINK_DE_MERCADOPAGO";
+  */
+  alert("Acá va la redirección al link único de Mercado Pago de "+PRODUCTO);
+}
+
+/* ============ MOTOR ============ */
+function render(){
+  document.getElementById("brandName").textContent=BRAND;
+  const step=steps[idx];
+  document.getElementById("pbar").style.width=(idx/(steps.length-1)*100)+"%";
+  document.getElementById("backBtn").style.visibility=(idx===0||step.noBack)?"hidden":"visible";
+  const sc=document.getElementById("screen");
+  sc.classList.remove("fade"); void sc.offsetWidth; sc.classList.add("fade");
+  sc.innerHTML=step.render();
+}
+document.getElementById("backBtn").onclick=back;
+render();
+</script>
+</body>
+</html>
