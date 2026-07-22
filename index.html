@@ -222,18 +222,18 @@ const store = {
   get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return (k in MEM)? MEM[k] : null; } },
   set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} MEM[k]=String(v); }
 };
-let S = JSON.parse(store.get("quizState")||"{}");
-S.estres      = S.estres      || [];
-S.mejorar     = S.mejorar     || [];
-S.modales     = S.modales     || [];
-S.convivencia = S.convivencia || [];
-S.refuerzos   = S.refuerzos   || [];
-let idx = 0; // Siempre arranca en la pantalla 1 al cargar. Si querés que retome donde quedó el usuario, cambiá por: let idx = S._idx || 0;
+let S = {};
+S.estres      = [];
+S.mejorar     = [];
+S.modales     = [];
+S.convivencia = [];
+S.refuerzos   = [];
+let idx = 0;
 function save(){ S._idx = idx; store.set("quizState", JSON.stringify(S)); }
 
 /* ============ HELPERS DINÁMICOS ============ */
 const g   = (o,a)=> S.sexo==="hembra" ? a : o;                       // género del perro
-const per = ()=> (S.edad==="cachorro"||S.edad==="joven") ? "tu cachorro" : "tu perro";
+const per = ()=> "tu perro";
 const perN= ()=> S.nombre ? S.nombre : per();
 const raza= ()=> (!S.raza || S.raza==="Mestizo" || S.raza==="Otra") ? "perro" : S.raza;
 const esMestizo = ()=> !S.raza || S.raza==="Mestizo" || S.raza==="Otra";
@@ -334,7 +334,7 @@ const steps = [
 { id:"intRaza", render:()=>`
   <h1><span class="acc">Desarrollá modales confiables</span> con una rutina pensada para ${esMestizo()? "el temperamento único de "+per() : "tu "+raza()}.</h1>
   <div class="img-slot">🐕‍🦺<!-- FOTO: perro de la raza dando la pata / caminando calmado --></div>
-  <p class="caption">Vamos a desglosar todo en una rutina clara, paso a paso, perfecta para ${esMestizo()? per() : "tu <b>"+raza()+"</b>"} ${S.edad==="cachorro"?"cachorro":""}.</p>
+  <p class="caption">Vamos a desglosar todo en una rutina clara, paso a paso, perfecta para ${esMestizo()? per() : "tu <b>"+raza()+"</b>"}.</p>
   <div style="margin-top:auto"></div>
   <button class="btn" onclick="next()">Continuar</button>`},
 
@@ -424,7 +424,7 @@ const steps = [
     {v:"ensuciar",   em:"💧", b:"Ensuciar adentro de casa"},
     {v:"destructivo",em:"🛋️", b:"Comportamiento destructivo (muebles, zapatillas...)"}
   ],
-  freeText:true, btn:"Continuar"
+  btn:"Continuar"
 })},
 
 /* 18 — Modales multi */
@@ -438,7 +438,7 @@ const steps = [
     {v:"senales",      em:"💬", b:"Respuesta a tus señales"},
     {v:"concentracion",em:"👀", b:"Concentración durante los paseos"}
   ],
-  freeText:true, btn:"Continuar"
+  btn:"Continuar"
 })},
 
 /* 19 — Convivencia */
@@ -564,17 +564,7 @@ const steps = [
   <div id="modalSlot"></div>`;
 }},
 
-/* 29 — Email */
-{ id:"email", noBack:true, render:()=>`
-  <h1>Ingresá tu correo para recibir la rutina de buenos modales de ${perN()}.</h1>
-  <div class="field-label" style="margin-top:14px">Escribí tu correo electrónico:</div>
-  <input type="email" id="emailInput" value="${S.email||""}" placeholder="Ingresá tu correo para recibir tu rutina" autocomplete="email"
-    oninput="S.email=this.value.trim();save();document.getElementById('nextBtn').disabled=!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(S.email)">
-  <div class="privacy">🔒 <span>Protegemos tu privacidad. Nunca enviamos spam, solo información relevante para vos y ${perN()}.</span></div>
-  <div style="margin-top:auto"></div>
-  <button class="btn" id="nextBtn" ${/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(S.email||"")?'':'disabled'} onclick="captureLead()">Continuar</button>`},
-
-/* 30 — Resultados */
+/* 29 — Resultados */
 { id:"result", noBack:true, render:renderResults }
 ];
 
@@ -594,7 +584,7 @@ function singleChoice({h,sub,img,key,opts,footer}){
     ${footer?`<footer style="margin-top:auto">${footer}<br>Todos los derechos reservados. ${new Date().getFullYear()}</footer>`:""}`;
 }
 
-function multiChoice({h,sub,key,opts,freeText,btn}){
+function multiChoice({h,sub,key,opts,btn}){
   const arr=S[key];
   return `
     <h1>${h}</h1>
@@ -605,9 +595,8 @@ function multiChoice({h,sub,key,opts,freeText,btn}){
         <span class="tx"><b style="font-size:14.5px">${o.b}</b></span>
         <span class="chk"></span>
       </button>`).join("")}
-    ${freeText?`<input type="text" placeholder="Escribí tu respuesta acá..." value="${S[key+'Otro']||""}" style="border-style:dashed;margin-bottom:12px" oninput="S['${key}Otro']=this.value;save();refreshMultiBtn('${key}')">`:""}
     <div style="margin-top:auto"></div>
-    <button class="btn" id="nextBtn" ${arr.length||S[key+'Otro']?'':'disabled'} onclick="next()">${btn}</button>`;
+    <button class="btn" id="nextBtn" ${arr.length?'':'disabled'} onclick="next()">${btn}</button>`;
 }
 
 function likert(key,statement){
@@ -726,7 +715,7 @@ function sensibilidad(){
 }
 function conductaTop(){
   const map={ladridos:"Ladridos excesivos",energia:"Energía desbordada",reactividad:"Reactividad",correa:"Tirones de correa",ansiedad:"Ansiedad por separación",ensuciar:"Ensuciar en casa",destructivo:"Comportamiento destructivo"};
-  return map[S.mejorar[0]] || S.mejorarOtro || "Modales generales";
+  return map[S.mejorar[0]] || "Modales generales";
 }
 function perfil(){
   const n=perN(), m=S.mejorar, e=S.estres;
@@ -878,8 +867,10 @@ function renderResults(){
     <p style="font-size:12.5px;font-weight:600;color:var(--ink-soft);line-height:1.55">Si seguís la rutina durante 30 días y no notás paseos más tranquilos con ${n}, te devolvemos el dinero. Así de simple: el riesgo lo asumimos nosotros. Más detalles en los Términos de uso.</p>
   </div>
 
-  <h2 class="sec-title">${PRODUCTO} — todo lo que recibís hoy</h2>
-  ${stack}
+  <div class="rcard" style="text-align:center;background:var(--blue-soft);border:none">
+    <p style="font-size:13px;font-weight:700;color:var(--ink-soft);text-decoration:line-through;margin-bottom:2px">Valor total: ${OFERTA.precioAntes}</p>
+    <p style="font-size:26px;font-weight:900;color:var(--accent-dark)">${OFERTA.precioHoy} <span style="font-size:13px;font-weight:700;color:var(--ink-soft)">pago único</span></p>
+  </div>
   <button class="btn big" onclick="checkout()">Quiero paseos tranquilos</button>
   <p class="guar">🛡️ Si en 30 días no notás paseos más tranquilos, te devolvemos el dinero</p>
 
