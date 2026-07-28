@@ -273,26 +273,9 @@ const steps = [
   ]
 })},
 
-/* 3 — Raza */
-{ id:"raza", render(){
-  const razas=["Mestizo","Golden Retriever","Labrador","Ovejero alemán","Caniche","Border Collie","Bulldog francés","Beagle","Salchicha","Rottweiler"];
-  const otras=["Akita","Basset Hound","Bóxer","Bulldog inglés","Chihuahua","Cocker Spaniel","Dálmata","Dogo argentino","Doberman","Galgo","Husky siberiano","Jack Russell","Pitbull","Pug","Schnauzer","Shih Tzu","Otra"];
-  return `
-    <h1>Elegí la raza de ${per()}</h1>
-    <p class="sub">La rutina se adapta a las tendencias típicas de cada raza.</p>
-    <div class="chips">${razas.map(r=>`<button class="chip ${S.raza===r?'sel':''}" onclick="pick('raza','${r}',false);renderChipsNext()">${r}</button>`).join("")}</div>
-    <div class="field-label">Otra raza</div>
-    <select onchange="pick('raza',this.value,false);renderChipsNext()">
-      <option value="">Seleccioná la raza</option>
-      ${otras.map(r=>`<option ${S.raza===r?'selected':''}>${r}</option>`).join("")}
-    </select>
-    <div style="margin-top:auto"></div>
-    <button class="btn" id="nextBtn" ${S.raza?'':'disabled'} onclick="next()">Siguiente paso</button>`;
-}},
-
-/* 4 — Tamaño */
+/* 3 — Tamaño */
 { id:"tamano", render:()=> singleChoice({
-  h:`¿Qué tamaño tiene ${esMestizo()? per() : "tu "+raza()}?`,
+  h:`¿Qué tamaño tiene ${per()}?`,
   key:"tamano",
   opts:[
     {v:"chico",   em:"🐕", b:"Chico",   s:"Hasta 10 kg"},
@@ -301,7 +284,7 @@ const steps = [
   ]
 })},
 
-/* 5 — Objetivo */
+/* 4 — Objetivo */
 { id:"objetivo", render:()=> singleChoice({
   h:`¡Definamos el objetivo principal de la rutina de ${per()}!`,
   sub:"Elegí tu prioridad:",
@@ -314,7 +297,7 @@ const steps = [
   ]
 })},
 
-/* 6 — Interstitial social */
+/* 5 — Interstitial social */
 { id:"social", render:()=>`
   <h1 class="accb-h"><span class="accb">Más de ${N_REAL} dueños de perros</span><br>ya crearon su rutina</h1>
   <p class="sub">Descubrieron con <b>${PRODUCTO}</b> que el problema nunca fue el perro ni el dueño: era el método.</p>
@@ -330,20 +313,20 @@ const steps = [
   <div style="margin-top:auto"></div>
   <button class="btn" onclick="next()">Continuar</button>`},
 
-/* 7 — Interstitial raza */
+/* 6 — Interstitial general (antes: raza específica) */
 { id:"intRaza", render:()=>`
-  <h1><span class="acc">Desarrollá modales confiables</span> con una rutina pensada para ${esMestizo()? "el temperamento único de "+per() : "tu "+raza()}.</h1>
-  <div class="img-slot">🐕‍🦺<!-- FOTO: perro de la raza dando la pata / caminando calmado --></div>
-  <p class="caption">Vamos a desglosar todo en una rutina clara, paso a paso, perfecta para ${esMestizo()? per() : "tu <b>"+raza()+"</b>"}.</p>
+  <h1><span class="acc">Desarrollá modales confiables</span> con una rutina pensada para el temperamento único de ${per()}.</h1>
+  <div class="img-slot">🐕‍🦺<!-- FOTO: perro dando la pata / caminando calmado --></div>
+  <p class="caption">Vamos a desglosar todo en una rutina clara, paso a paso, perfecta para ${per()}.</p>
   <div style="margin-top:auto"></div>
   <button class="btn" onclick="next()">Continuar</button>`},
 
-/* 8-10 — Likert */
+/* 7-9 — Likert */
 { id:"lik1", render:()=> likert("lik1", `${cap(perN())} me ignora por completo cuando algo lo distrae.`)},
 { id:"lik2", render:()=> likert("lik2", "Vuelvo de los paseos con el brazo dolorido y de mal humor, en vez de relajado.")},
 { id:"lik3", render:()=> likert("lik3", "Ya probé consejos de YouTube y de conocidos, pero nada me funcionó de forma consistente.")},
 
-/* 11 — No estás solo */
+/* 10 — No estás solo */
 { id:"noSolo", render:()=>`
   <h1><span class="accb">¡No estás solo/a — y no sos un mal dueño!</span></h1>
   <p class="sub">Que ${per()} tire de la correa o ignore tus llamados no habla de vos: habla del método que te enseñaron. Una rutina simple de modales funciona en la vida real.</p>
@@ -355,21 +338,21 @@ const steps = [
   <div style="margin-top:auto"></div>
   <button class="btn" onclick="next()">Continuar</button>`},
 
-/* 12 — Timbre */
+/* 11 — Timbre */
 { id:"timbre", render:()=> singleChoice({
   h:`¿${cap(per())} pierde el control cuando suena el timbre?`,
   img:"🚪", key:"timbre",
   opts:[ {v:"si", em:"😮‍💨", b:"Sí"}, {v:"no", em:"🤗", b:"No"} ]
 })},
 
-/* 13 — Salta */
+/* 12 — Salta */
 { id:"salta", render:()=> singleChoice({
   h:`¿${cap(per())} salta sobre las personas o los animales?`,
   img:"🙋", key:"salta",
   opts:[ {v:"si", em:"😢", b:"Sí"}, {v:"no", em:"😎", b:"No"} ]
 })},
 
-/* 14 — Ladridos */
+/* 13 — Ladridos */
 { id:"ladra", render:()=> singleChoice({
   h:`¿${cap(per())} les ladra a las personas o a otros animales?`,
   img:"📢", key:"ladra",
@@ -380,7 +363,7 @@ const steps = [
   ]
 })},
 
-/* 15 — Correa */
+/* 14 — Correa */
 { id:"correa", render:()=> singleChoice({
   h:`En los paseos, ¿${per()} tira de la correa?`,
   img:"🦮", key:"correa",
@@ -391,7 +374,7 @@ const steps = [
   ]
 })},
 
-/* 16 — Estrés multi */
+/* 15 — Estrés multi */
 { id:"estres", render:()=> multiChoice({
   h:`¿Qué situaciones hacen que el día a día con ${per()} sea estresante?`,
   sub:"Marcá todas las que correspondan:",
@@ -410,7 +393,7 @@ const steps = [
   btn:"Siguiente paso"
 })},
 
-/* 17 — Mejorar multi */
+/* 16 — Mejorar multi */
 { id:"mejorar", render:()=> multiChoice({
   h:"¿Qué te gustaría mejorar de su comportamiento?",
   sub:"Marcá todas las que correspondan:",
@@ -427,7 +410,7 @@ const steps = [
   btn:"Continuar"
 })},
 
-/* 18 — Modales multi */
+/* 17 — Modales multi */
 { id:"modalesQ", render:()=> multiChoice({
   h:"¿Qué modales te gustaría inculcarle con la rutina?",
   sub:"Marcá todas las que correspondan:",
@@ -441,7 +424,7 @@ const steps = [
   btn:"Continuar"
 })},
 
-/* 19 — Convivencia */
+/* 18 — Convivencia */
 { id:"convivencia", render:()=> multiChoice({
   h:`¿Con quién convive ${per()}?`,
   sub:"Marcá todas las que correspondan:",
@@ -456,7 +439,7 @@ const steps = [
   btn:"Continuar"
 })},
 
-/* 20 — Vivienda */
+/* 19 — Vivienda */
 { id:"vivienda", render:()=> singleChoice({
   h:"¿Dónde viven?",
   key:"vivienda",
@@ -467,7 +450,7 @@ const steps = [
   ]
 })},
 
-/* 21 — Quién entrena */
+/* 20 — Quién entrena */
 { id:"quien", render:()=> singleChoice({
   h:`¿Quién va a hacer la rutina con ${per()}?`,
   key:"quien",
@@ -478,7 +461,7 @@ const steps = [
   ]
 })},
 
-/* 22 — Anticipación */
+/* 21 — Anticipación */
 { id:"anticipa", render:()=>`
   <h1>¡Tu rutina personalizada de modales está casi lista!</h1>
   <div class="cal">🗓️✅🏅</div>
@@ -487,7 +470,7 @@ const steps = [
   <div style="margin-top:auto"></div>
   <button class="btn" onclick="next()">Continuar</button>`},
 
-/* 23 — Refuerzos */
+/* 22 — Refuerzos */
 { id:"refuerzos", render:()=> multiChoice({
   h:`¿Qué le ayuda a ${per()} a prestarte atención?`,
   sub:"Marcá todas las que correspondan:",
@@ -502,7 +485,7 @@ const steps = [
   btn:"Siguiente paso"
 })},
 
-/* 24 — Recompensa */
+/* 23 — Recompensa */
 { id:"recompensa", render:()=> singleChoice({
   h:`¿Recompensás a ${per()} cuando se porta bien?`,
   key:"recompensa",
@@ -513,7 +496,7 @@ const steps = [
   ]
 })},
 
-/* 25 — Nombre */
+/* 24 — Nombre */
 { id:"nombre", render:()=>`
   <h1>El nombre de ${per()} es...</h1>
   <div class="field-label">Escribí el nombre de ${per()}:</div>
@@ -522,7 +505,7 @@ const steps = [
   <div style="margin-top:auto"></div>
   <button class="btn" id="nextBtn" ${S.nombre?'':'disabled'} onclick="next()">Siguiente paso</button>`},
 
-/* 26 — Tiempo */
+/* 25 — Tiempo */
 { id:"tiempo", render:()=> singleChoice({
   h:`¿Cuánto tiempo por día podés dedicarle a ${perN()}?`,
   key:"tiempo",
@@ -534,7 +517,7 @@ const steps = [
   ]
 })},
 
-/* 27 — Fecha meta */
+/* 26 — Fecha meta */
 { id:"meta", render:()=>`
   <h1>Esta rutina está diseñada para inculcarle buenos modales a ${perN()}.</h1>
   <p class="sub">Según tus respuestas, esperamos que los modales de ${perN()} mejoren para el</p>
@@ -546,7 +529,7 @@ const steps = [
   <div style="margin-top:auto"></div>
   <button class="btn" onclick="next()">Continuar</button>`},
 
-/* 28 — Loading */
+/* 27 — Loading */
 { id:"loading", noBack:true, render(){ setTimeout(startLoading,50); return `
   <div class="ring-wrap">
     <div class="ring">
@@ -564,7 +547,7 @@ const steps = [
   <div id="modalSlot"></div>`;
 }},
 
-/* 29 — Resultados */
+/* 28 — Resultados */
 { id:"result", noBack:true, render:renderResults }
 ];
 
@@ -616,7 +599,6 @@ function pick(key,val,advance){
   S[key]=val; save();
   if(advance){ setTimeout(next,180); } else { render(); }
 }
-function renderChipsNext(){ render(); }
 function toggle(key,val,exclusive,exclusiveList){
   const excl=(exclusiveList||"").split(",").filter(Boolean);
   let arr=S[key];
@@ -626,10 +608,6 @@ function toggle(key,val,exclusive,exclusiveList){
     arr.includes(val)? arr=arr.filter(v=>v!==val) : arr.push(val);
   }
   S[key]=arr; save(); render();
-}
-function refreshMultiBtn(key){
-  const b=document.getElementById("nextBtn");
-  if(b) b.disabled = !(S[key].length || S[key+"Otro"]);
 }
 function next(){ if(idx<steps.length-1){ idx++; save(); render(); window.scrollTo(0,0);} }
 function back(){ if(idx>0){ idx--; save(); render(); } }
@@ -801,7 +779,7 @@ function renderResults(){
       <li>📊 <span>Reactividad: <b>${react}</b></span></li>
       <li>💙 <span>Sensibilidad: <b>${sens}</b></span></li>
       <li>✅ <span>Preparación para empezar: <b>${S.recompensa==="si"?"Perfecta":"Buena"}</b></span></li>
-      <li>🐕 <span>Perfil: <b>${esMestizo()?"Mestizo":raza()} ${S.edad}</b></span></li>
+      <li>🐕 <span>Perfil: <b>Perro ${S.edad}</b></span></li>
       <li>🎯 <span>Tu objetivo: <b>${objMap[S.objetivo]||"Mejores modales"}</b></span></li>
     </ul>
   </div>
