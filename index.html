@@ -83,8 +83,8 @@
   .trust li{list-style:none;font-size:13.5px;font-weight:700;padding:6px 0;display:flex;gap:8px}
   .trust li::before{content:'✔️'}
   .note-card{background:var(--yellow-soft);border-radius:12px;padding:14px 16px;font-size:13.5px;font-weight:700;text-align:center;line-height:1.5;margin:16px 0}
-  .img-slot{width:100%;aspect-ratio:16/10;border-radius:var(--radius);background:linear-gradient(140deg,#e8eef2,#f6f9fb);display:flex;align-items:center;justify-content:center;font-size:52px;margin:16px 0;overflow:hidden}
-  .img-slot img{width:100%;height:100%;object-fit:contain}
+  .img-slot{width:100%;border-radius:var(--radius);background:linear-gradient(140deg,#e8eef2,#f6f9fb);margin:16px 0;overflow:hidden;line-height:0}
+  .img-slot img{width:100%;height:auto;display:block}
   .caption{text-align:center;font-size:13px;color:var(--ink-soft);font-weight:600;line-height:1.5;margin-bottom:8px}
   .center-copy{text-align:center;font-size:14px;font-weight:600;line-height:1.6;color:var(--ink-soft);margin:14px 0}
   .center-copy b{color:var(--ink)}
@@ -558,7 +558,7 @@ function singleChoice({h,sub,img,key,opts,footer}){
   return `
     <h1>${h}</h1>
     ${sub?`<p class="sub">${sub}</p>`:""}
-    ${img?`<div class="img-slot" style="aspect-ratio:3/2">${img}<!-- FOTO/GIF acá --></div>`:""}
+    ${img?`<div class="img-slot">${img}<!-- FOTO/GIF acá --></div>`:""}
     ${opts.map(o=>`
       <button class="opt ${S[key]===o.v?'sel':''}" onclick="pick('${key}','${o.v}',true)">
         ${o.em?`<span class="em">${o.em}</span>`:""}
@@ -809,7 +809,7 @@ function renderResults(){
   </div>
 
   <h2 class="sec-title">${PRODUCTO} — todo lo que recibís hoy</h2>
-  <div class="img-slot" style="aspect-ratio:5/4"><img src="7.png" alt="Ebook principal Buen Perro más 5 bonos"></div>
+  <div class="img-slot"><img src="7.png" alt="Ebook principal Buen Perro más 5 bonos"></div>
   ${stack}
   <button class="btn big" onclick="checkout()">Quiero paseos tranquilos</button>
   <p class="legal">Pago único, sin suscripciones. Acceso inmediato y para siempre.<br>Procesado de forma segura por Mercado Pago. Detalles en Términos de uso.</p>
