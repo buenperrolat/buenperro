@@ -316,7 +316,7 @@ const steps = [
 /* 6 — Interstitial general (antes: raza específica) */
 { id:"intRaza", render:()=>`
   <h1><span class="acc">Desarrollá modales confiables</span> con una rutina pensada para el temperamento único de ${per()}.</h1>
-  <div class="img-slot">🐕‍🦺<!-- FOTO: perro dando la pata / caminando calmado --></div>
+  <div class="img-slot"><img src="1.png" alt="Perro atento recibiendo una señal de su dueña"></div>
   <p class="caption">Vamos a desglosar todo en una rutina clara, paso a paso, perfecta para ${per()}.</p>
   <div style="margin-top:auto"></div>
   <button class="btn" onclick="next()">Continuar</button>`},
@@ -341,21 +341,21 @@ const steps = [
 /* 11 — Timbre */
 { id:"timbre", render:()=> singleChoice({
   h:`¿${cap(per())} pierde el control cuando suena el timbre?`,
-  img:"🚪", key:"timbre",
+  img:'<img src="2.png" alt="Perro reaccionando al sonar el timbre">', key:"timbre",
   opts:[ {v:"si", em:"😮‍💨", b:"Sí"}, {v:"no", em:"🤗", b:"No"} ]
 })},
 
 /* 12 — Salta */
 { id:"salta", render:()=> singleChoice({
   h:`¿${cap(per())} salta sobre las personas o los animales?`,
-  img:"🙋", key:"salta",
+  img:'<img src="3.png" alt="Perro saltando sobre una persona al saludar">', key:"salta",
   opts:[ {v:"si", em:"😢", b:"Sí"}, {v:"no", em:"😎", b:"No"} ]
 })},
 
 /* 13 — Ladridos */
 { id:"ladra", render:()=> singleChoice({
   h:`¿${cap(per())} les ladra a las personas o a otros animales?`,
-  img:"📢", key:"ladra",
+  img:'<img src="4.png" alt="Perro ladrando con correa puesta">', key:"ladra",
   opts:[
     {v:"siempre", b:"Sí, todo el tiempo"},
     {v:"aveces",  b:"A veces pasa"},
@@ -366,7 +366,7 @@ const steps = [
 /* 14 — Correa */
 { id:"correa", render:()=> singleChoice({
   h:`En los paseos, ¿${per()} tira de la correa?`,
-  img:"🦮", key:"correa",
+  img:'<img src="5.png" alt="Perro tirando de la correa en un paseo">', key:"correa",
   opts:[
     {v:"mucho", em:"💪", b:"Sí, me lleva ${g('él','ella')} a mí"},
     {v:"aveces",em:"😅", b:"Solo cuando ve algo que le interesa"},
@@ -809,6 +809,7 @@ function renderResults(){
   </div>
 
   <h2 class="sec-title">${PRODUCTO} — todo lo que recibís hoy</h2>
+  <div class="img-slot" style="aspect-ratio:5/4"><img src="7.png" alt="Ebook principal Buen Perro más 5 bonos"></div>
   ${stack}
   <button class="btn big" onclick="checkout()">Quiero paseos tranquilos</button>
   <p class="legal">Pago único, sin suscripciones. Acceso inmediato y para siempre.<br>Procesado de forma segura por Mercado Pago. Detalles en Términos de uso.</p>
