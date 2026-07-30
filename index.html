@@ -873,11 +873,13 @@ function startCountdowns(){
 
 /* ============ CHECKOUT ============ */
 function checkout(){
-  /* TODO: evento InitiateCheckout del píxel + redirección a Mercado Pago (link único):
-     fbq('track','InitiateCheckout');
-     location.href = "TU_LINK_DE_MERCADOPAGO";
-  */
-  alert("Acá va la redirección al link único de Mercado Pago de "+PRODUCTO);
+  /* 1) Reemplazá "TU-TIENDA.com" por el dominio real de tu tienda Shopify
+        (el que ves en la barra del navegador cuando entrás a comprar).
+     2) El número después de /cart/ es el Variant ID del producto "Buen Perro".
+     3) El ":1" indica la cantidad (1 unidad). */
+  const DOMINIO_TIENDA = "yjn2e9-s0.myshopify.com";
+  const VARIANT_ID = "59850037690449";
+  location.href = `https://${DOMINIO_TIENDA}/cart/${VARIANT_ID}:1`;
 }
 
 /* ============ MOTOR ============ */
