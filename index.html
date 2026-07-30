@@ -6,6 +6,23 @@
 <title>Rutina personalizada de modales para tu perro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1053477143834717');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1053477143834717&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <style>
   :root{
     --accent:#FF5A3C;        /* coral principal */
@@ -873,10 +890,7 @@ function startCountdowns(){
 
 /* ============ CHECKOUT ============ */
 function checkout(){
-  /* 1) Reemplazá "TU-TIENDA.com" por el dominio real de tu tienda Shopify
-        (el que ves en la barra del navegador cuando entrás a comprar).
-     2) El número después de /cart/ es el Variant ID del producto "Buen Perro".
-     3) El ":1" indica la cantidad (1 unidad). */
+  if(typeof fbq!=="undefined") fbq('track','InitiateCheckout');
   const DOMINIO_TIENDA = "yjn2e9-s0.myshopify.com";
   const VARIANT_ID = "59850037690449";
   location.href = `https://${DOMINIO_TIENDA}/cart/${VARIANT_ID}:1`;
@@ -891,6 +905,10 @@ function render(){
   const sc=document.getElementById("screen");
   sc.classList.remove("fade"); void sc.offsetWidth; sc.classList.add("fade");
   sc.innerHTML=step.render();
+  if(step.id==="result" && !S._leadSent){
+    S._leadSent=true; save();
+    if(typeof fbq!=="undefined") fbq('track','Lead');
+  }
 }
 document.getElementById("backBtn").onclick=back;
 render();
